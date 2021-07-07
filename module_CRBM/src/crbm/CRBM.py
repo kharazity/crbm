@@ -25,9 +25,6 @@ class CRBM(Model):
         training_params : dictionary of hyperparameters that affect the training
         optimizer_params : dictionary for optimization type and parameters
         state_vecs : tf.Tensor of quantum mechanical statevectors
-    Methods:
-
-
     """
 
     def __init__(self, 
@@ -45,9 +42,6 @@ class CRBM(Model):
 
             num_hid: number of nodes in hidden layer of CRBM.
 
-            qubit_map: If the underlying type of H_op is not PauliOp, then we need the user to specify which qubit map they want to use. Defaults to Jordan-Wigner, "JW". Possible arguments are "JW, "BK, "parity", where "BK" is Bravyi-Kitaev. 
-
-
             weight_initialize: a subclass of tf Initializer that specifies how the weights of the CRBM should be initialized. Defaults to RandomUniform, various initializer types can be found here: https://www.tensorflow.org/api_docs/python/tf/keras/initializers; should not include object initializer '()'
 
             training_params: Dictionary for specifying hyperparameters for the training of the CRBM.
@@ -56,10 +50,11 @@ class CRBM(Model):
 
             optimizer_params: Dictionary for specifying the optimizer and parameters to pass to it. Valid keys are argument names to tf.optimizers.Optimizer()
 
-
             save_best: Save CRBM which performs best from those trained, otherwise all models are saved into a folder. Defaults to true.
 
             save_path: String specifying where to save the files to. Defaults to user's current directory.
+
+            filename: String specifying name of saved model files
         Returns:
             CRBM object
         """
@@ -192,7 +187,9 @@ class CRBM(Model):
         Args:
             psi: state vector like array
             meas_op: the qubit operator we wish to compute expectation values of
-            n_sample: 
+            n_sample: number of samples to take from probability distribution
+        Returns:
+            np.array of measurements
         """
         #assert(len(psi) == 2**self.num_qubits)
         mat = of.linalg.get_sparse_operator(meas_op, n_qubits = self.num_qubits).todense()
@@ -239,7 +236,6 @@ def train(crbm :Model, psi :np.array, seed :int = 0) -> np.array:
         seed: random seed int
     Returns:
         normalized statevector produced by crbm
-
     """
     psi = psi.astype(np.complex64)
     np.random.seed(seed)
@@ -268,8 +264,7 @@ def train(crbm :Model, psi :np.array, seed :int = 0) -> np.array:
         tf.keras.callbacks.ModelCheckpoint('model.tf', monitor = 'loss', verbose = verbose, save_best_only = save_best),
         EarlyStoppingByLoss(monitor = 'loss', value=min_val),
         tf.keras.callbacks.ReduceLROnPlateau(patience = lr_patience, monitor = 'loss', factor = lr_factor),
-        tf.keras.callbacks.EarlyStopping(monitor='loss', patience = loss_patience, restore_best_weights=True)
-    ]
+        tf.keras.callbacks.EarlyStopping(monitor='loss', patience = loss_patience, restore_best_weights=True)]
     hist = crbm.fit(measurements, verbose = verbose, callbacks=callbacks, batch_size = batch_size, shuffle=False)
     #update for custom string in case user passes a save_path or filename
     filename = crbm.filename
