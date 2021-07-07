@@ -1,0 +1,3 @@
+# QMcrbm Package
+
+This is a simple package for a complex-valued implementation of a restricted Boltzman machine (RBM) based on this [paper] (https://arxiv.org/abs/1910.07596) by Torlai et al. This provides an interface to pass a hermitian operator (Hamiltonian) and trains a CRBM to efficiently measure it's ground state. You can then embed the model within a quantum algorithm, such as VQE, to reduce the measurement overhead for your algorithm.

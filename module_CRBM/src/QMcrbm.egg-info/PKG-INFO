@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: QMcrbm
+Version: 0.0.1
+Summary: CRBM implementation for precise quantum measurements
+Home-page: UNKNOWN
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License ::OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+License-File: LICENSE
+
+# QMcrbm Package
+
+This is a simple package for a complex-valued implementation of a restricted Boltzman machine (RBM) based on this [paper] (https://arxiv.org/abs/1910.07596) by Torlai et al. This provides an interface to pass a hermitian operator (Hamiltonian) and trains a CRBM to efficiently measure it's ground state. You can then embed the model within a quantum algorithm, such as VQE, to reduce the measurement overhead for your algorithm.
+
